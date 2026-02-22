@@ -1,0 +1,56 @@
+Final-only pipeline bundle
+Generated: 2026-02-22 08:37:22
+File count: 51
+
+.gitignore	276
+config\config.smoke.yaml	1579
+config\config.yaml	1750
+config\gwas_manifest.smoke.yaml	1344
+config\gwas_manifest.yaml	2166
+config\traits.smoke.yaml	304
+config\traits.yaml	316
+envs\environment.yml	395
+profiles\windows-default\config.yaml	136
+profiles\windows-safe\config.yaml	137
+profiles\windows-sensitivity\config.yaml	136
+profiles\windows-stable\config.yaml	136
+PUBLISH_SCOPE.md	585
+pyproject.toml	641
+README.md	1672
+Snakefile	74
+src\__init__.py	2
+src\pipeline\__init__.py	2
+src\pipeline\assemble_results.py	4738
+src\pipeline\bidirectional_mr.py	9019
+src\pipeline\build_figures.py	6648
+src\pipeline\build_presentation_assets.py	20170
+src\pipeline\coloc_colon_and_brain.py	14889
+src\pipeline\coloc_sensitivity.py	10956
+src\pipeline\filter_significant_eqtl.py	1911
+src\pipeline\genetic_correlation.py	5987
+src\pipeline\gwas_harmonization.py	6433
+src\pipeline\harmonization_sensitivity.py	11370
+src\pipeline\harmonize_variants.py	3716
+src\pipeline\heterogeneity_colon.py	3791
+src\pipeline\ingest_eqtl_brain.py	3580
+src\pipeline\ingest_eqtl_colon_local.py	1884
+src\pipeline\mr_sensitivity.py	6030
+src\pipeline\parse_eqtl_to_parquet.py	9392
+src\pipeline\pathway_enrichment.py	3286
+src\pipeline\run_control.py	10425
+src\pipeline\run_managed.py	19846
+src\pipeline\run_sensitivity.py	3420
+src\pipeline\scrna_support_colon.py	4085
+src\pipeline\shared_specific_colon.py	3924
+src\pipeline\validate_inputs.py	3957
+src\utils\__init__.py	2
+src\utils\duckdb_utils.py	1018
+src\utils\genetics.py	1823
+src\utils\io.py	1726
+src\utils\stats.py	3239
+tests\conftest.py	181
+tests\test_genetics.py	372
+tests\test_stats.py	691
+tests\test_workflow_contract.py	804
+workflow\rules\pipeline.smk	15620
+MATERIALS_AND_METHODS.md	6987

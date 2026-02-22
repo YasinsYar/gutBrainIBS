@@ -1,0 +1,8 @@
+cores: 4
+printshellcmds: true
+rerun-incomplete: true
+latency-wait: 30
+keep-going: false
+show-failed-logs: true
+resources:
+  io_slots: 1

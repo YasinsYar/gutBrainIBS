@@ -1,0 +1,63 @@
+project_name: gut_brain_ibs_pipeline_smoke
+config_file: config/config.smoke.yaml
+external_storage_root: E:/storage
+eqtl:
+  colon_local:
+    colon_sigmoid: tests/data/smoke/QTD000226.smoke.tsv.gz
+    colon_transverse: tests/data/smoke/QTD000231.smoke.tsv.gz
+  optional_cc: []
+  brain:
+    enabled: false
+    source_table_url: https://raw.githubusercontent.com/eQTL-Catalogue/eQTL-Catalogue-resources/master/tabix/tabix_ftp_paths.tsv
+    tissue_keywords:
+    - brain
+    max_datasets: 1
+    quant_method: ge
+sc:
+  inputs:
+  - E:/storage/sc/GSE185224_clustered_annotated_adata_k10_lr0.92_v1.5.h5ad
+  - E:/storage/sc/VUMC_HTAN_DIS_EPI_CELLxGENE_23March2023.h5ad
+analysis:
+  p_threshold_eqtl: 1.0e-06
+  window_bp: 500000
+  wakefield_W: 0.04
+  coloc_priors:
+    p1: 0.0001
+    p2: 0.0001
+    p12: 1.0e-05
+  exclude_palindromic: true
+  fdr_alpha: 0.05
+  mr_instrument_p: 5.0e-08
+  mr_clump_r2: 0.001
+  mr_clump_kb: 10000
+
+sensitivity:
+  coloc:
+    windows_bp:
+    - 250000
+    - 500000
+    - 1000000
+    p12_values:
+    - 1.0e-06
+    - 1.0e-05
+    - 1.0e-04
+    mhc_start: 25000000
+    mhc_end: 34000000
+
+genome_build: GRCh38
+gwas:
+  manifest: config/gwas_manifest.smoke.yaml
+  traits: config/traits.smoke.yaml
+  ibs_trait_id: IBS
+runtime:
+  n_jobs: 2
+  chunksize: 50000
+  progress_every_chunks: 2
+  progress_every_row_groups: 5
+  parquet_row_group_size: 20000
+  duckdb_temp_dir: data_interim/duckdb_tmp
+  duckdb_memory_limit_mb: 2048
+  cleanup_eqtl_parts_after_combine: true
+  random_seed: 42
+pathways:
+  gene_sets_tsv: tests/data/smoke/gene_sets.smoke.tsv

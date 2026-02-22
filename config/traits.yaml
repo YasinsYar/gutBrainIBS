@@ -1,0 +1,13 @@
+traits:
+  - trait_id: IBS
+    trait_label: Irritable bowel syndrome
+    group: ibs
+  - trait_id: MDD
+    trait_label: Major depressive disorder
+    group: psychiatric
+  - trait_id: ANXIETY
+    trait_label: Anxiety
+    group: psychiatric
+  - trait_id: NEUROTICISM
+    trait_label: Neuroticism
+    group: psychiatric

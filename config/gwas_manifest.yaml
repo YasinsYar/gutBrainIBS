@@ -1,0 +1,68 @@
+traits:
+  - trait_id: IBS
+    trait_label: Irritable bowel syndrome
+    ancestry: EUR
+    sample_size: 486601
+    build: GRCh38
+    file_path: data_raw/gwas/ibs_summary.tsv.gz
+    is_mandatory: true
+    beta_col: beta
+    se_col: standard_error
+    p_col: p_value
+    ea_col: effect_allele
+    oa_col: other_allele
+    chr_col: chromosome
+    pos_col: base_pair_location
+    rsid_col: hm_rsid
+    source_url: https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90016001-GCST90017000/GCST90016564/harmonised/34741163-GCST90016564-EFO_0000555.h.tsv.gz
+
+  - trait_id: MDD
+    trait_label: Major depressive disorder
+    ancestry: EUR
+    sample_size: 514455
+    build: GRCh38
+    file_path: data_raw/gwas/mdd_summary.tsv.gz
+    is_mandatory: true
+    beta_col: beta
+    se_col: standard_error
+    p_col: p_value
+    ea_col: effect_allele
+    oa_col: other_allele
+    chr_col: chromosome
+    pos_col: base_pair_location
+    rsid_col: rsid
+    source_url: https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90726001-GCST90727000/GCST90726344/harmonised/GCST90726344.h.tsv.gz
+
+  - trait_id: ANXIETY
+    trait_label: Anxiety
+    ancestry: EUR
+    sample_size: 394626
+    build: GRCh38
+    file_path: data_raw/gwas/anxiety_summary.tsv.gz
+    is_mandatory: true
+    beta_col: beta
+    se_col: standard_error
+    p_col: p_value
+    ea_col: effect_allele
+    oa_col: other_allele
+    chr_col: chromosome
+    pos_col: base_pair_location
+    rsid_col: rsid
+    source_url: https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST90468001-GCST90469000/GCST90468110/harmonised/GCST90468110.h.tsv.gz
+
+  - trait_id: NEUROTICISM
+    trait_label: Neuroticism
+    ancestry: EUR
+    sample_size: 329821
+    build: GRCh38
+    file_path: data_raw/gwas/neuroticism_summary.tsv.gz
+    is_mandatory: true
+    beta_col: beta
+    se_col: standard_error
+    p_col: p_value
+    ea_col: effect_allele
+    oa_col: other_allele
+    chr_col: chromosome
+    pos_col: base_pair_location
+    rsid_col: hm_rsid
+    source_url: https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/GCST005001-GCST006000/GCST005232/harmonised/29255261-GCST005232-EFO_0007660.h.tsv.gz

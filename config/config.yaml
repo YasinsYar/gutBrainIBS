@@ -1,0 +1,73 @@
+project_name: gut_brain_ibs_pipeline
+config_file: config/config.yaml
+external_storage_root: E:/storage
+
+eqtl:
+  colon_local:
+    colon_sigmoid: E:/storage/qtl/QTD000226.all.tsv.gz
+    colon_transverse: E:/storage/qtl/QTD000231.all.tsv.gz
+  optional_cc:
+    - E:/storage/qtl/QTD000227.cc.tsv.gz
+    - E:/storage/qtl/QTD000232.cc.tsv.gz
+    - E:/storage/qtl/QTD000234.cc.tsv.gz
+  brain:
+    enabled: true
+    source_table_url: https://raw.githubusercontent.com/eQTL-Catalogue/eQTL-Catalogue-resources/master/tabix/tabix_ftp_paths.tsv
+    tissue_keywords:
+      - brain
+    max_datasets: 4
+    quant_method: ge
+
+sc:
+  inputs:
+    - E:/storage/sc/GSE185224_clustered_annotated_adata_k10_lr0.92_v1.5.h5ad
+    - E:/storage/sc/VUMC_HTAN_DIS_EPI_CELLxGENE_23March2023.h5ad
+    - E:/storage/sc/data/sc/VUMC_HTAN_VAL_EPI_CELLxGENE_23March2023.h5ad
+    - E:/storage/sc/Full_obj_raw_counts_nosoupx.h5ad
+
+analysis:
+  p_threshold_eqtl: 1.0e-6
+  window_bp: 500000
+  wakefield_W: 0.04
+  coloc_priors:
+    p1: 1.0e-4
+    p2: 1.0e-4
+    p12: 1.0e-5
+  exclude_palindromic: true
+  fdr_alpha: 0.05
+  mr_instrument_p: 5.0e-8
+  mr_clump_r2: 0.001
+  mr_clump_kb: 10000
+
+sensitivity:
+  coloc:
+    windows_bp:
+      - 250000
+      - 500000
+      - 1000000
+    p12_values:
+      - 1.0e-6
+      - 1.0e-5
+      - 1.0e-4
+    mhc_start: 25000000
+    mhc_end: 34000000
+
+genome_build: GRCh38
+
+gwas:
+  manifest: config/gwas_manifest.yaml
+  traits: config/traits.yaml
+  ibs_trait_id: IBS
+
+runtime:
+  n_jobs: 4
+  chunksize: 800000
+  progress_every_chunks: 5
+  progress_every_row_groups: 10
+  parquet_row_group_size: 500000
+  duckdb_temp_dir: data_interim/duckdb_tmp
+  duckdb_memory_limit_mb: 4096
+  cleanup_eqtl_parts_after_combine: true
+  random_seed: 42
+pathways:
+  gene_sets_tsv: ""

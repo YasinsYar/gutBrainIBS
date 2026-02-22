@@ -1,0 +1,23 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.env/
+.snake*
+.logs/
+
+# Large artifacts
+data_raw/
+data_interim/
+data_processed/
+figures/
+reports/
+
+# keep placeholders
+!data_raw/.gitkeep
+!data_interim/.gitkeep
+!data_processed/.gitkeep
+!figures/.gitkeep
+!reports/.gitkeep
