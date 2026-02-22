@@ -56,6 +56,15 @@ def part_filename(item: dict) -> str:
     return f"{item['dataset_id']}_{digest}.parquet"
 
 
+def part_is_fresh(part_path: Path, source_path: Path) -> bool:
+    if not part_path.exists() or not source_path.exists():
+        return False
+    try:
+        return part_path.stat().st_mtime >= source_path.stat().st_mtime
+    except OSError:
+        return False
+
+
 def parse_dataset_to_part(con, item: dict, part_path: Path, row_group_size: int) -> tuple[int, int, str]:
     cols = detect_columns(item["path"])
     missing = [c for c in BASE_COLUMNS if c not in cols]
@@ -221,7 +230,7 @@ def main() -> None:
         for item in files:
             part_path = parts_dir / part_filename(item)
             part_paths.append(part_path)
-            if part_path.exists() and not args.force_reparse:
+            if part_is_fresh(part_path, Path(item["path"])) and not args.force_reparse:
                 pf = pq.ParquetFile(part_path)
                 parse_rows.append(
                     {
