@@ -33,12 +33,17 @@ def iter_input_files(colon_manifest: Path, brain_manifest: Path) -> list[dict]:
             path = Path(getattr(row, "local_path"))
             if not path.exists():
                 continue
+            sha256 = str(getattr(row, "sha256", "") or "").strip()
+            if sha256.lower() == "nan":
+                sha256 = ""
             files.append(
                 {
                     "dataset_id": str(getattr(row, "dataset_id")),
                     "tissue": str(getattr(row, "tissue")),
                     "source": str(getattr(row, "source", "eqtl_catalogue")),
                     "path": path,
+                    "sha256": sha256,
+                    "size_bytes": int(path.stat().st_size),
                 }
             )
     return files
@@ -51,7 +56,10 @@ def detect_columns(path: Path) -> set[str]:
 
 
 def part_filename(item: dict) -> str:
-    key = f"{item['dataset_id']}|{item['tissue']}|{Path(item['path']).resolve()}"
+    key = (
+        f"{item['dataset_id']}|{item['tissue']}|{Path(item['path']).resolve()}|"
+        f"{item.get('sha256', '')}|{item.get('size_bytes', 0)}"
+    )
     digest = hashlib.sha1(key.encode("utf-8")).hexdigest()[:12]
     return f"{item['dataset_id']}_{digest}.parquet"
 

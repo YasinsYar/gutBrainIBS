@@ -1,5 +1,33 @@
 ACTIVE_CONFIG = config.get("config_file", "config/config.yaml")
 GWAS_MANIFEST = config.get("gwas", {}).get("manifest", "config/gwas_manifest.yaml")
+TRAITS_CONFIG = config.get("gwas", {}).get("traits", "config/traits.yaml")
+
+from pathlib import Path
+import yaml
+
+
+def existing_gwas_files():
+    manifest = Path(GWAS_MANIFEST)
+    if not manifest.exists():
+        return []
+    try:
+        data = yaml.safe_load(manifest.read_text(encoding="utf-8")) or {}
+        traits = data.get("traits", [])
+    except Exception:
+        return []
+    paths = []
+    for row in traits:
+        p = Path(str(row.get("file_path", "")))
+        if p.exists():
+            paths.append(str(p))
+    return paths
+
+
+def existing_brain_eqtl_files():
+    root = Path("data_raw/qtl/brain")
+    if not root.exists():
+        return []
+    return [str(p) for p in sorted(root.glob("*.all.tsv.gz"))]
 
 rule all:
     input:
@@ -85,6 +113,10 @@ rule stage_reporting:
 
 
 rule validate_inputs:
+    input:
+        cfg=ACTIVE_CONFIG,
+        gwas_manifest=GWAS_MANIFEST,
+        traits_config=TRAITS_CONFIG
     output:
         inventory="data_processed/qc/input_inventory.tsv",
         validation_json="data_processed/qc/input_validation.json"
@@ -94,7 +126,9 @@ rule validate_inputs:
 
 rule ingest_eqtl_colon_local:
     input:
-        "data_processed/qc/input_validation.json"
+        validation="data_processed/qc/input_validation.json",
+        src_sigmoid=lambda wc: config["eqtl"]["colon_local"]["colon_sigmoid"],
+        src_transverse=lambda wc: config["eqtl"]["colon_local"]["colon_transverse"]
     output:
         sigmoid="data_raw/qtl/colon_sigmoid.all.tsv.gz",
         transverse="data_raw/qtl/colon_transverse.all.tsv.gz",
@@ -115,7 +149,10 @@ rule ingest_eqtl_brain:
 rule parse_eqtl_to_parquet:
     input:
         colon_manifest="data_raw/qtl/colon_manifest.tsv",
-        brain_manifest="data_raw/qtl/brain_manifest.tsv"
+        brain_manifest="data_raw/qtl/brain_manifest.tsv",
+        colon_sigmoid="data_raw/qtl/colon_sigmoid.all.tsv.gz",
+        colon_transverse="data_raw/qtl/colon_transverse.all.tsv.gz",
+        brain_files=lambda wc: existing_brain_eqtl_files()
     output:
         parquet="data_interim/eqtl_parsed.parquet",
         parse_manifest="data_interim/eqtl_parse_manifest.tsv"
@@ -169,7 +206,9 @@ rule heterogeneity_colon:
 
 rule gwas_harmonization:
     input:
-        "data_processed/qc/input_validation.json"
+        validation="data_processed/qc/input_validation.json",
+        manifest=GWAS_MANIFEST,
+        trait_files=lambda wc: existing_gwas_files()
     output:
         parquet="data_interim/gwas_harmonized.parquet",
         qc="data_processed/qc/gwas_harmonization_qc.tsv"

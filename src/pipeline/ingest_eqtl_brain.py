@@ -74,6 +74,8 @@ def main() -> None:
     keywords = [x.lower() for x in brain_cfg.get("tissue_keywords", ["brain"])]
     mask = subset["tissue_label"].str.lower().apply(lambda x: any(k in x for k in keywords))
     subset = subset[mask].sort_values("dataset_id").head(int(brain_cfg.get("max_datasets", 4)))
+    if subset.empty:
+        raise RuntimeError("no_brain_datasets_selected_from_metadata")
 
     out_dir = Path("data_raw/qtl/brain")
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -102,7 +104,11 @@ def main() -> None:
             }
         )
 
-    pd.DataFrame(out_rows).to_csv(args.manifest, sep="\t", index=False)
+    manifest = pd.DataFrame(out_rows)
+    manifest.to_csv(args.manifest, sep="\t", index=False)
+    n_ok = int(manifest["status"].astype(str).isin(["existing", "downloaded"]).sum()) if not manifest.empty else 0
+    if n_ok == 0:
+        raise RuntimeError("brain_eqtl_ingest_failed_all_datasets")
 
 
 if __name__ == "__main__":

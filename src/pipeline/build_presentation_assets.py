@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from adjustText import adjust_text
+from matplotlib.ticker import FuncFormatter
 from matplotlib_venn import venn2
 from upsetplot import UpSet, from_indicators
 
@@ -54,13 +55,36 @@ def fig_upset(shared: pd.DataFrame, out_path: Path) -> None:
         save_placeholder(out_path, "Colon eQTL overlap (UpSet)")
         return
     inds = shared.loc[:, ["in_sigmoid", "in_transverse"]].fillna(False).astype(bool)
-    series = from_indicators(["in_sigmoid", "in_transverse"], inds)
-    fig = plt.figure(figsize=(10, 6))
+    inds = inds.rename(columns={"in_sigmoid": "sigmoid", "in_transverse": "transverse"})
+    series = from_indicators(["sigmoid", "transverse"], inds)
+    fig = plt.figure(figsize=(12.5, 7.5), constrained_layout=True)
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         warnings.filterwarnings("ignore", category=UserWarning)
-        UpSet(series, subset_size="count", show_counts=True, sort_by="cardinality").plot(fig=fig)
-    plt.suptitle("Colon eQTL overlap between sigmoid and transverse", y=1.02)
+        axes = UpSet(
+            series,
+            subset_size="count",
+            show_counts="{:,.0f}",
+            sort_by="cardinality",
+            element_size=48,
+        ).plot(fig=fig)
+
+    # Avoid label collision in the left-bottom block.
+    totals_ax = axes.get("totals")
+    if totals_ax is not None:
+        totals_ax.set_xticks([])
+        totals_ax.set_xlabel("")
+        totals_ax.grid(False)
+
+    intersections_ax = axes.get("intersections")
+    if intersections_ax is not None:
+        intersections_ax.yaxis.set_major_formatter(FuncFormatter(lambda x, _pos: f"{int(x):,}" if x >= 1 else "0"))
+
+    matrix_ax = axes.get("matrix")
+    if matrix_ax is not None:
+        matrix_ax.tick_params(axis="y", labelsize=11)
+
+    plt.suptitle("Colon eQTL overlap between sigmoid and transverse", y=1.01)
     fig.savefig(out_path, dpi=220, bbox_inches="tight")
     plt.close(fig)
 

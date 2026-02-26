@@ -14,8 +14,14 @@ def stage_file(src: Path, dst: Path) -> str:
     ensure_parent(dst)
     if dst.exists() and src.resolve() == dst.resolve():
         return "existing"
-    if dst.exists() and dst.stat().st_size == src.stat().st_size:
-        return "existing"
+    if dst.exists():
+        try:
+            src_stat = src.stat()
+            dst_stat = dst.stat()
+            if dst_stat.st_size == src_stat.st_size and dst_stat.st_mtime_ns >= src_stat.st_mtime_ns:
+                return "existing"
+        except OSError:
+            pass
     shutil.copy2(src, dst)
     return "copied"
 

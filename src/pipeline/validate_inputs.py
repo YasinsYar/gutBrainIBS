@@ -115,14 +115,23 @@ def main() -> None:
     ensure_parent(args.inventory)
     write_tsv(inv, args.inventory)
 
+    n_missing_colon = int(((inv["section"] == "eqtl_colon") & (~inv["exists"])).sum())
+    n_unreadable_colon = int(((inv["section"] == "eqtl_colon") & inv["exists"] & (~inv["readable"])).sum())
+    n_missing_mandatory_gwas = int(((inv["section"] == "gwas") & (inv["note"] == "missing_mandatory")).sum())
+
     summary = {
         "n_items": int(len(inv)),
         "n_missing": int((~inv["exists"]).sum()),
         "n_unreadable": int((inv["exists"] & ~inv["readable"]).sum()),
-        "n_missing_mandatory_gwas": int(((inv["section"] == "gwas") & (inv["note"] == "missing_mandatory")).sum()),
+        "n_missing_colon": n_missing_colon,
+        "n_unreadable_colon": n_unreadable_colon,
+        "n_missing_mandatory_gwas": n_missing_mandatory_gwas,
         "warnings": inv.loc[inv["note"] != "ok", ["section", "id", "note", "path"]].to_dict(orient="records"),
     }
     write_json(summary, args.summary_json)
+
+    if n_missing_colon > 0 or n_unreadable_colon > 0 or n_missing_mandatory_gwas > 0:
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":
